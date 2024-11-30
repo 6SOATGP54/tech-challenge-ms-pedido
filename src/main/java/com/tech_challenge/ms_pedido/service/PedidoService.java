@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Logger;
 
 @Service
 public class PedidoService {
@@ -40,16 +41,20 @@ public class PedidoService {
 
         pedidoRepository.save(pedido);
 
+
         OrdemVendaMercadoPagoDTO ordemVendaMercadoPagoDTO = gerarOrdemVenda(pedido, identificacaoPedido);
 
-        return  String.valueOf(rabbitTemplate.convertSendAndReceive(
-                PEDIDO_EX ,
-                PEDIDO_EFETUADO,
-                ordemVendaMercadoPagoDTO
-        ));
+        rabbitTemplate.convertAndSend(PEDIDO_EFETUADO, ordemVendaMercadoPagoDTO);
+        Object o = rabbitTemplate.receiveAndConvert("pagamento.qrcode", 10000);
+
+        String qrcode = (String) o;
+        System.out.println(qrcode);
+
+        return qrcode;
     }
 
     private static OrdemVendaMercadoPagoDTO gerarOrdemVenda(Pedido pedido, String identificacaoPedido) {
+
         List<ItemOrdemVendaDTO> itemOrdemVendaDTOS = new ArrayList<>();
 
         pedido.getPedidoProdutos().forEach(produto -> {
@@ -82,7 +87,6 @@ public class PedidoService {
     public List<Pedido> listarPedidos(LocalDateTime inicio, LocalDateTime fim) {
         return pedidoRepository.findByCriacaoBetween(inicio,fim);
     }
-
 
     @RabbitListener(queues = "pagamento.concluido")
     private void iniciarPreparoPedido(StatusPagamentoDTO statusPagamentoDTO){

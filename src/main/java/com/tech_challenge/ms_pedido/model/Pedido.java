@@ -1,5 +1,6 @@
 package com.tech_challenge.ms_pedido.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.EnumNaming;
 import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -16,6 +17,7 @@ import java.util.List;
 @Document
 public class Pedido {
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String id;
 
     private List<PedidoProduto> pedidoProdutos = new ArrayList<>();
