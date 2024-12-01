@@ -12,26 +12,6 @@ spec:
         app: app-food-selector
     spec:
       containers:
-        - name: rabbitmq
-          image: rabbitmq:3-management
-          ports:
-            - containerPort: 5672  # Porta padrão do RabbitMQ
-            - containerPort: 15672 # Porta do painel de gerenciamento
-          env:
-            - name: RABBITMQ_DEFAULT_USER
-              valueFrom:
-                secretKeyRef:
-                  name: rabbitmq-secret
-                  key: username
-            - name: RABBITMQ_DEFAULT_PASS
-              valueFrom:
-                secretKeyRef:
-                  name: rabbitmq-secret
-                  key: password
-          volumeMounts:
-            - name: rabbitmq-config-volume
-              mountPath: /etc/rabbitmq
-              readOnly: true
         - name: app-food
           image: cledkube/ms-pedido:latest
           resources:
@@ -44,22 +24,37 @@ spec:
           ports:
             - containerPort: 8084
           env:
-            - name: DB_HOST
-              value: food
-            - name: URL_DB
-              value: aurora-cluster-food.cluster-c1w4uwac23w1.us-east-1.rds.amazonaws.com
+            - name: DATABASE_DB
+              value: ms-pedido
+            - name: HOST_DB
+              value: mongodb
             - name: DB_USER
               valueFrom:
                 secretKeyRef:
-                  name: rds-postgres-secret
+                  name: mongo-food-service
                   key: username
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: rds-postgres-secret
+                  name: mongo-food-service
+                  key: password
+            - name: DB_PORT
+              value: "27017"
+            - name: RABBIT_HOST
+              value: rabbitmq
+            - name: RABBIT_PORT
+              value: "5672"
+            - name: RABBIT_USER
+              valueFrom:
+                secretKeyRef:
+                  name: rabbi-secret
+                  key: username
+            - name: RABBIT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: rabbi-secret
                   key: password
       volumes:
         - name: postgres-storage
-        - name: rabbitmq-config-volume
           emptyDir: {}
       

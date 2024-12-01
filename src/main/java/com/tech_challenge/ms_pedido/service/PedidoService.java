@@ -41,7 +41,6 @@ public class PedidoService {
 
         pedidoRepository.save(pedido);
 
-
         OrdemVendaMercadoPagoDTO ordemVendaMercadoPagoDTO = gerarOrdemVenda(pedido, identificacaoPedido);
 
         rabbitTemplate.convertAndSend(PEDIDO_EFETUADO, ordemVendaMercadoPagoDTO);
