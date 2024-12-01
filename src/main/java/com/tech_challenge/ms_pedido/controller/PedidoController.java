@@ -30,16 +30,10 @@ public class PedidoController {
         return ResponseEntity.ok(pedidoService.listarPedidos(inicio, fim));
     }
 
-    @PostMapping("/preparoPronto")
+    @PostMapping("/atualizarPedido")
     public ResponseEntity<Pedido> preparoPronto(@RequestParam String idPedido) {
-        return ResponseEntity.ok(pedidoService.preparoPronto(idPedido));
+        return ResponseEntity.ok(pedidoService.statusPedido(idPedido));
     }
-
-    @PostMapping("/finalizarPedido")
-    public ResponseEntity<Pedido> finalizarPedido(@RequestParam String idPedido) {
-        return ResponseEntity.ok(pedidoService.finalizarPedido(idPedido));
-    }
-
 
 
 }

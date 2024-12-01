@@ -58,15 +58,15 @@ public class PedidoService {
         List<ItemOrdemVendaDTO> itemOrdemVendaDTOS = new ArrayList<>();
 
         pedido.getPedidoProdutos().forEach(produto -> {
-                itemOrdemVendaDTOS.add(new ItemOrdemVendaDTO(
-                        null,
-                        produto.getCategoria().name(),
-                        produto.getNome(),
-                        produto.getNome().concat(produto.getCategoria().name()),
-                        produto.getPreco(),
-                        produto.getQuantidade(),
-                        "unit",
-                        produto.getPreco().multiply(BigDecimal.valueOf(produto.getQuantidade()))));
+            itemOrdemVendaDTOS.add(new ItemOrdemVendaDTO(
+                    null,
+                    produto.getCategoria().name(),
+                    produto.getNome(),
+                    produto.getNome().concat(produto.getCategoria().name()),
+                    produto.getPreco(),
+                    produto.getQuantidade(),
+                    "unit",
+                    produto.getPreco().multiply(BigDecimal.valueOf(produto.getQuantidade()))));
 
         });
 
@@ -85,11 +85,11 @@ public class PedidoService {
     }
 
     public List<Pedido> listarPedidos(LocalDateTime inicio, LocalDateTime fim) {
-        return pedidoRepository.findByCriacaoBetween(inicio,fim);
+        return pedidoRepository.findByCriacaoBetween(inicio, fim);
     }
 
     @RabbitListener(queues = "pagamento.concluido")
-    private void iniciarPreparoPedido(StatusPagamentoDTO statusPagamentoDTO){
+    private void iniciarPreparoPedido(StatusPagamentoDTO statusPagamentoDTO) {
         pedidoRepository.findById(statusPagamentoDTO.getIdPedido()).ifPresent(pedido -> {
             pedido.getPreparacao().add(Pedido.Preparacao.PREPARACAO);
             pedido.setPagamento(Pedido.Status.PAGO);
@@ -97,23 +97,21 @@ public class PedidoService {
         });
     }
 
-    public Pedido preparoPronto(String idPedido) {
+    public Pedido statusPedido(String idPedido) {
         AtomicReference<Pedido> pedidoPronto = new AtomicReference<>();
         pedidoRepository.findById(idPedido).ifPresent(pedido -> {
-            pedido.getPreparacao().add(Pedido.Preparacao.PRONTO);
+
+            if (pedido.getPreparacao().contains(Pedido.Preparacao.PREPARACAO) &&
+                    pedido.getPreparacao().contains(Pedido.Preparacao.PRONTO)) {
+                pedido.getPreparacao().add(Pedido.Preparacao.FINALIZADO);
+            } else {
+                pedido.getPreparacao().add(Pedido.Preparacao.PRONTO);
+            }
+
             pedidoPronto.set(pedidoRepository.save(pedido));
         });
 
         return pedidoPronto.get();
     }
 
-    public Pedido finalizarPedido(String idPedido) {
-        AtomicReference<Pedido> pedidoPronto = new AtomicReference<>();
-        pedidoRepository.findById(idPedido).ifPresent(pedido -> {
-            pedido.getPreparacao().add(Pedido.Preparacao.FINALIZADO);
-            pedidoPronto.set(pedidoRepository.save(pedido));
-        });
-
-        return pedidoPronto.get();
-    }
 }
