@@ -4,12 +4,12 @@ LABEL maintainer="https://github.com/6SOATGP54"
 WORKDIR /home
 
 #Envoiroments
-ENV URI_DB=""  \
-    HOST_DB="" \
-    DATABASE_DB="" \
-    DB_USER="" \
-    DB_PASSWORD="" \
-    DB_PORT="" \
+ENV URI_NOSQL=""  \
+    HOST_NOSQL="" \
+    DATABASE_NOSQL="" \
+    NOSQL_USER="" \
+    NOSQL_PASSWORD="" \
+    NOSQL_PORT="" \
     RABBIT_HOST=""  \
     RABBIT_PORT="" \
     RABBIT_USER="" \
