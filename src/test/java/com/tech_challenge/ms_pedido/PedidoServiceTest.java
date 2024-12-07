@@ -1,5 +1,6 @@
 package com.tech_challenge.ms_pedido;
 import com.tech_challenge.ms_pedido.dto.OrdemVendaMercadoPagoDTO;
+import com.tech_challenge.ms_pedido.dto.StatusPagamentoDTO;
 import com.tech_challenge.ms_pedido.model.Pedido;
 import com.tech_challenge.ms_pedido.model.PedidoProduto;
 import com.tech_challenge.ms_pedido.repository.PedidoRepository;

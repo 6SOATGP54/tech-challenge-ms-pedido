@@ -41,16 +41,16 @@ class PedidoControllerTest {
         // Arrange
         Pedido pedido = new Pedido();
         pedido.setId("12345");
-        when(pedidoService.efetuarPedido(pedido)).thenReturn("QR_CODE");
+        when(pedidoService.efetuarPedido(any(Pedido.class))).thenReturn("QR_CODE");
 
         // Act & Assert
-//        mockMvc.perform(post("/efetuarPedido")
-//                        .contentType("application/json")
-//                        .content("{\"id\": \"12345\"}")) // Conteúdo JSON para o pedido
-//                .andExpect(status().isOk())
-//                .andExpect(content().string("QR_CODE"));
-//
-//        verify(pedidoService).efetuarPedido(pedido); // Verifica se o metodo foi chamado
+        mockMvc.perform(post("/efetuarPedido")
+                        .contentType("application/json")
+                        .content("{\"id\": \"12345\"}"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("QR_CODE"));
+
+        verify(pedidoService).efetuarPedido(any(Pedido.class)); // Verifica se o metodo foi chamado
     }
 
     @Test
