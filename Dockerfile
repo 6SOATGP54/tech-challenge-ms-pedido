@@ -4,8 +4,7 @@ LABEL maintainer="https://github.com/6SOATGP54"
 WORKDIR /home
 
 #Envoiroments
-ENV URI_NOSQL=""  \
-    HOST_NOSQL="" \
+ENV HOST_NOSQL="" \
     DATABASE_NOSQL="" \
     NOSQL_USER="" \
     NOSQL_PASSWORD="" \
