@@ -60,7 +60,7 @@ jobs:
   sonar-analysis:
     name: SonarQube
     runs-on: ubuntu-latest
-    needs: build
+    needs: build-test
     steps:
       - uses: actions/checkout@v4
         with:
@@ -82,18 +82,22 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
+      - name: Run Tests
+        run: mvn -B clean verify
+
       - name: SonarQube
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN:  ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify sonar:sonar -Dsonar.projectKey=ms-pedido -Dsonar.branch.name=main
+        run: mvn -B verify sonar:sonar -Dsonar.projectKey=ms-pedido \
+          -Dsonar.branch.name=main \
+          -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
 
   docker-build-push:
     name: Build and Push Docker Image
     runs-on: ubuntu-latest
     needs:
     - sonar-analysis
-    - build-test
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
